@@ -218,7 +218,97 @@ Java_top_andnux_jnidemo_JniNatice_getArray(JNIEnv *env, jobject instance) {
     return array;
 }
 ```
-#### 10. 附上签名。
+#### 10. 局部引用。
+```java
+1. native接口
+public class JniNatice {
+    static {
+        System.loadLibrary("native");
+    }
+    public native void localReference();
+}
+2. c++实现
+extern "C"
+JNIEXPORT void JNICALL
+Java_top_andnux_jnidemo_JniNatice_localReference(JNIEnv *env, jobject instance) {
+    for (int i = 0; i < 100; ++i) {
+        jclass jclass1 = env->FindClass("java/util/Date");
+        jmethodID jmethodID1 = env->GetMethodID(jclass1, "<init>", "()V");
+        jobject jobject1 = env->NewObject(jclass1, jmethodID1);
+        env->DeleteLocalRef(jobject1);
+    }
+}
+```
+#### 11. 全局引用(若全局引用类似)。
+> **若全局引用：**<br>
+> 节省内存，在内存不足的时候回收。<br>
+> 可以引用一个不常用的对象，如果为空，临时创建。<br>
+> 创建：NewWeakGlobalRef<br>
+> 销毁：DeleteWeakGlobalRef<br>
+```java
+1. native接口
+public class JniNatice {
+    static {
+        System.loadLibrary("native");
+    }
+
+    public native void createGlobalReference();
+
+    public native String getGlobalReference();
+
+    public native void releaseGlobalReference();
+}
+2. c++实现
+static jstring globalString;
+extern "C"
+JNIEXPORT void JNICALL
+Java_top_andnux_jnidemo_JniNatice_createGlobalReference(JNIEnv *env, jobject instance) {
+    jstring glob = env->NewStringUTF("哈哈哈哈");
+    globalString = static_cast<jstring>(env->NewGlobalRef(glob));
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_top_andnux_jnidemo_JniNatice_getGlobalReference(JNIEnv *env, jobject instance) {
+    return globalString;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_top_andnux_jnidemo_JniNatice_releaseGlobalReference(JNIEnv *env, jobject instance) {
+    env->DeleteGlobalRef(globalString);
+}
+```
+#### 12. 异常处理。
+```java
+1. native接口
+public class JniNatice {
+    static {
+        System.loadLibrary("native");
+    }
+    public native String exception();
+}
+2. c++实现
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_top_andnux_jnidemo_JniNatice_exception(JNIEnv *env, jobject instance) {
+    jclass jclazz = env->GetObjectClass(instance);
+    jfieldID fieldID = env->GetFieldID(jclazz, "key2", "Ljava/lang/String;");
+    jthrowable jthrowable1 = env->ExceptionOccurred();
+    if (jthrowable1 != NULL) {
+        env->ExceptionClear();
+        fieldID = env->GetFieldID(jclazz, "key", "Ljava/lang/String;");
+    }
+    jstring jstring1 = static_cast<jstring>(env->GetObjectField(instance, fieldID));
+    char *ptr = (char *) env->GetStringChars(jstring1, JNI_FALSE);
+    if (strcmp(ptr, "andnux") != 0) {
+        jclass jclass1 = env->FindClass("java/lang/IllegalArgumentException");
+        env->ThrowNew(jclass1, "参数错误");
+    }
+    return jstring1;
+}
+```
+#### 13. 附上签名。
 | 基本类型 | 属性签名 | 方法签名 |
 | -------- | -------- | -------- |
 |void | V | () |
@@ -230,9 +320,9 @@ Java_top_andnux_jnidemo_JniNatice_getArray(JNIEnv *env, jobject instance) {
 |long | J | (J)V |
 |float | F | (F)V |
 |double | D | (D)V |
- > 引用类型的描述符
- 一般引用类型则为 L + 该类型类描述符 + ; (注意，这儿的分号“；”只得是JNI的一部分，而不是我们汉语中的分段，下同)
- > 例如：
+ > **引用类型的描述符:**<br>
+ 一般引用类型则为 L + 该类型类描述符 + ;<br>
+  (注意，这儿的分号“；”只得是JNI的一部分，而不是我们汉语中的分段，下同)
  ```java
  int[ ]     其描述符为[I
  float[ ]   其描述符为[F

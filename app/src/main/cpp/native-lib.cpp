@@ -121,3 +121,59 @@ Java_top_andnux_jnidemo_JniNatice_getArray(JNIEnv *env, jobject instance) {
     env->ReleaseIntArrayElements(array, elems, 0);
     return array;
 }
+
+//局部引用
+extern "C"
+JNIEXPORT void JNICALL
+Java_top_andnux_jnidemo_JniNatice_localReference(JNIEnv *env, jobject instance) {
+    for (int i = 0; i < 100; ++i) {
+        jclass jclass1 = env->FindClass("java/util/Date");
+        jmethodID jmethodID1 = env->GetMethodID(jclass1, "<init>", "()V");
+        jobject jobject1 = env->NewObject(jclass1, jmethodID1);
+        env->DeleteLocalRef(jobject1);
+    }
+}
+
+//全局引用
+static jstring globalString;
+extern "C"
+JNIEXPORT void JNICALL
+Java_top_andnux_jnidemo_JniNatice_createGlobalReference(JNIEnv *env, jobject instance) {
+    jstring glob = env->NewStringUTF("哈哈哈哈");
+    globalString = static_cast<jstring>(env->NewGlobalRef(glob));
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_top_andnux_jnidemo_JniNatice_getGlobalReference(JNIEnv *env, jobject instance) {
+    return globalString;
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_top_andnux_jnidemo_JniNatice_releaseGlobalReference(JNIEnv *env, jobject instance) {
+    env->DeleteGlobalRef(globalString);
+}
+
+//异常
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_top_andnux_jnidemo_JniNatice_exception(JNIEnv *env, jobject instance) {
+
+    jclass jclazz = env->GetObjectClass(instance);
+    jfieldID fieldID = env->GetFieldID(jclazz, "key2", "Ljava/lang/String;");
+    jthrowable jthrowable1 = env->ExceptionOccurred();
+    if (jthrowable1 != NULL) {
+        //保证JAVA代码可运行
+        env->ExceptionClear();
+        //补救措施
+        fieldID = env->GetFieldID(jclazz, "key", "Ljava/lang/String;");
+    }
+    jstring jstring1 = static_cast<jstring>(env->GetObjectField(instance, fieldID));
+    char *ptr = (char *) env->GetStringChars(jstring1, JNI_FALSE);
+    if (strcmp(ptr, "andnux") != 0) {
+        jclass jclass1 = env->FindClass("java/lang/IllegalArgumentException");
+        env->ThrowNew(jclass1, "参数错误");
+    }
+    return jstring1;
+}

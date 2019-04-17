@@ -35,4 +35,15 @@ public class JniNatice {
     public native void qsort(int[] datas);
 
     public native int[] getArray();
+
+    public native void localReference();
+
+    public native void createGlobalReference();
+
+    public native String getGlobalReference();
+
+    public native void releaseGlobalReference();
+
+    public native String exception();
+
 }

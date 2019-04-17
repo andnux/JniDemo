@@ -25,5 +25,16 @@ public class MainActivity extends AppCompatActivity {
         for (int i : array) {
             Log.e("TAG", " " + i);
         }
+        jniNatice.localReference();
+        jniNatice.createGlobalReference();
+        Log.e("TAG", jniNatice.getGlobalReference());
+        jniNatice.releaseGlobalReference();
+//        Log.e("TAG", jniNatice.getGlobalReference());
+        try {
+            Log.e("TAG", jniNatice.exception());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.e("TAG", "===================");
     }
 }
