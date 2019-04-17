@@ -241,10 +241,10 @@ Java_top_andnux_jnidemo_JniNatice_localReference(JNIEnv *env, jobject instance) 
 ```
 #### 11. 全局引用(若全局引用类似)。
 > **若全局引用：**
-> 节省内存，在内存不足的时候回收。
-> 可以引用一个不常用的对象，如果为空，临时创建。
-> 创建：NewWeakGlobalRef
-> 销毁：DeleteWeakGlobalRef
+> 节省内存，在内存不足的时候回收。<br>
+> 可以引用一个不常用的对象，如果为空，临时创建。<br>
+> 创建：NewWeakGlobalRef<br>
+> 销毁：DeleteWeakGlobalRef<br>
 ```java
 1. native接口
 public class JniNatice {
@@ -320,8 +320,8 @@ Java_top_andnux_jnidemo_JniNatice_exception(JNIEnv *env, jobject instance) {
 |long | J | (J)V |
 |float | F | (F)V |
 |double | D | (D)V |
- > **引用类型的描述符:**
- 一般引用类型则为 L + 该类型类描述符 + ;
+ > **引用类型的描述符:**<br>
+ 一般引用类型则为 L + 该类型类描述符 + ;<br>
   (注意，这儿的分号“；”只得是JNI的一部分，而不是我们汉语中的分段，下同)
  ```java
  int[ ]     其描述符为[I
