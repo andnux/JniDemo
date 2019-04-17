@@ -218,3 +218,24 @@ Java_top_andnux_jnidemo_JniNatice_getArray(JNIEnv *env, jobject instance) {
     return array;
 }
 ```
+#### 10. 附上签名。
+| 基本类型 | 属性签名 | 方法签名 |
+| -------- | -------- | -------- |
+|void | V | () |
+|boolean | Z | (Z)V |
+|byte | B |  (B)V |
+|char | C | (C)V |
+|short | S | (S)V |
+|int | I | (I)V |
+|long | J | (J)V |
+|float | F | (F)V |
+|double | D | (D)V |
+ > 引用类型的描述符
+ 一般引用类型则为 L + 该类型类描述符 + ; (注意，这儿的分号“；”只得是JNI的一部分，而不是我们汉语中的分段，下同)
+ > 例如：
+ ```java
+ int[ ]     其描述符为[I
+ float[ ]   其描述符为[F
+ String[ ]  其描述符为[Ljava/lang/String;
+ Object[ ]类型的域描述符为[Ljava/lang/Object;
+ ```
