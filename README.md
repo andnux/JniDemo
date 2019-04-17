@@ -240,7 +240,7 @@ Java_top_andnux_jnidemo_JniNatice_localReference(JNIEnv *env, jobject instance) 
 }
 ```
 #### 11. 全局引用(若全局引用类似)。
-> **若全局引用：**
+> **若全局引用：**<br>
 > 节省内存，在内存不足的时候回收。<br>
 > 可以引用一个不常用的对象，如果为空，临时创建。<br>
 > 创建：NewWeakGlobalRef<br>
