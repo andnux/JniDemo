@@ -31,4 +31,8 @@ public class JniNatice {
     public native void accessNonvirtualMethod();
 
     public native String chineseChars();
+
+    public native void qsort(int[] datas);
+
+    public native int[] getArray();
 }

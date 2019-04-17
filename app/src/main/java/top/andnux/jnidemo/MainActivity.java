@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,5 +21,9 @@ public class MainActivity extends AppCompatActivity {
         TextView view = findViewById(R.id.sample_text);
         view.setText(String.valueOf(jniNatice.chineseChars()));
         jniNatice.accessNonvirtualMethod();
+        int[] array = jniNatice.getArray();
+        for (int i : array) {
+            Log.e("TAG", " " + i);
+        }
     }
 }

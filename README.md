@@ -175,3 +175,46 @@ Java_top_andnux_jnidemo_JniNatice_chineseChars(JNIEnv *env, jobject instance) {
 //    return env->NewStringUTF(c_str);
 }
 ```
+#### 8. 访问JAVA数组。
+```java
+1. native接口
+public class JniNatice {
+    static {
+        System.loadLibrary("native");
+    }
+    public native void  qsort(int [] datas);
+}
+2. c++实现
+extern "C"
+JNIEXPORT void JNICALL
+Java_top_andnux_jnidemo_JniNatice_qsort(JNIEnv *env, jobject instance, jintArray datas_) {
+    jint *datas = env->GetIntArrayElements(datas_, NULL);
+    jint len =(env->GetArrayLength(datas_));
+    qsort(datas, static_cast<size_t>(len), sizeof(int),
+          reinterpret_cast<int (*)(const void *, const void *)>(comparator));
+    env->ReleaseIntArrayElements(datas_, datas, 0);
+}
+```
+#### 9. 返回JAVA数组。
+```java
+1. native接口
+public class JniNatice {
+    static {
+        System.loadLibrary("native");
+    }
+    public native int[] getArray();
+}
+2. c++实现
+extern "C"
+JNIEXPORT jintArray JNICALL
+Java_top_andnux_jnidemo_JniNatice_getArray(JNIEnv *env, jobject instance) {
+    jintArray array = env->NewIntArray(10);
+    jint len = env->GetArrayLength(array);
+    jint *elems = env->GetIntArrayElements(array, JNI_FALSE);
+    for (int i = 0; i < len; ++i) {
+        elems[i] = i;
+    }
+    env->ReleaseIntArrayElements(array, elems, 0);
+    return array;
+}
+```
